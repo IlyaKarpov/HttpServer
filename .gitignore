@@ -1,0 +1,9 @@
+git rm -rf --cached .
+git add .
+.idea/
+*.iml
+/target/
+/out/
+/build/
+.gradle/
+/db.properties
