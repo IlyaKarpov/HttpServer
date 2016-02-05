@@ -19,7 +19,7 @@ public class ProxyServer {
 
     public static void main(String... a) {
 
-//        ExecutorService executor = Executors.newFixedThreadPool(30);
+        ExecutorService executor = Executors.newFixedThreadPool(30);
 
         try {
             ServerSocket proxy = new ServerSocket(PROXY_PORT);
@@ -27,8 +27,8 @@ public class ProxyServer {
             while (true) {
                 Socket client = proxy.accept();
                 Socket server = new Socket("localhost", SERVER_PORT);
-                new Thread(new ProxyHandler(client, server)).start();
-//                executor.execute(new ProxyHandler(client, server));
+//                new Thread(new ProxyHandler(client, server)).start();
+                executor.execute(new ProxyHandler(client, server));
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -43,8 +43,8 @@ public class ProxyServer {
 //        } catch (Exception e) {
 //            e.printStackTrace();
 //        }
-//    }
-//
+    }
+
 //    public static void runServer(String host, int remoteport, int localport)
 //            throws IOException {
 //
@@ -122,5 +122,5 @@ public class ProxyServer {
 //                }
 //            }
 //        }
-    }
+//    }
 }

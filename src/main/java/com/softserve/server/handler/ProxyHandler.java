@@ -41,19 +41,44 @@ public class ProxyHandler implements Runnable {
         try {
             readHeader();
             writeResponse();
-//            server.close();
-//            client.close();
         } catch (IOException e) {
             e.printStackTrace();
+        }finally {
+            try {
+                server.close();
+                client.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
     }
 
     private void readHeader() throws IOException {
-        int bytesRead;
-        while ((bytesRead = streamFromClient.read(request)) != -1) {
-            streamToServer.write(request, 0, bytesRead);
-            streamToServer.flush();
-        }
+        Thread thread = new Thread() {
+            public void run() {
+                int bytesRead;
+                try {
+                    while ((bytesRead = streamFromClient.read(request)) != -1) {
+                        streamToServer.write(request, 0, bytesRead);
+                        streamToServer.flush();
+                    }
+                } catch (IOException e) {
+
+                }
+
+                try {
+                    streamToServer.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        };
+        thread.start();
+//        int bytesRead;
+//        while ((bytesRead = streamFromClient.read(request)) != -1) {
+//            streamToServer.write(request, 0, bytesRead);
+//            streamToServer.flush();
+//        }
 //        streamToServer.close();
     }
 
@@ -63,7 +88,7 @@ public class ProxyHandler implements Runnable {
             streamToClient.write(response, 0, bytesRead);
             streamToClient.flush();
         }
-//        streamToClient.close();
+        streamToClient.close();
     }
 
 }
