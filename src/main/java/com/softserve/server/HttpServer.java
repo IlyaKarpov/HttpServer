@@ -23,12 +23,8 @@ public class HttpServer {
             ServerSocket server = new ServerSocket(PORT);
 
             while (true) {
-                try {
-                    Socket client = server.accept();
-                    executor.execute(new Handler(client));
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
+                Socket client = server.accept();
+                executor.execute(new Handler(client));
             }
         } catch (IOException e) {
             e.printStackTrace();
