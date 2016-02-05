@@ -23,6 +23,7 @@ public class Client {
             dataOutputStream.writeUTF(String.valueOf(marker));
             dataOutputStream.flush();
 
+            client.close();
         } catch (IOException e) {
             e.printStackTrace();
         }

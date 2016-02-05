@@ -2,7 +2,6 @@ package com.softserve.server.handler;
 
 import java.io.*;
 import java.net.Socket;
-import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
@@ -32,10 +31,10 @@ public class Handler implements Runnable {
         }
     }
 
-    @Override
     public void run() {
         try {
 
+            readHeader();
             writeResponse();
 
         } catch (IOException e) {
@@ -49,10 +48,28 @@ public class Handler implements Runnable {
         }
     }
 
-    private void writeResponse() throws IOException {
-        DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
-        String message = dateFormat.format(Calendar.getInstance().getTime()) + " "
-                + new DataInputStream(client.getInputStream()).readUTF();
+    private String readHeader() throws IOException {
+        BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
+        StringBuilder builder = new StringBuilder();
+        String currentLine;
+
+        while (true) {
+            currentLine = reader.readLine();
+            System.out.println(currentLine);
+            if (currentLine == null || currentLine.isEmpty()) {
+                break;
+            }
+            builder.append(currentLine).append(System.getProperty("line.separator"));
+        }
+        return builder.toString();
+    }
+
+    private synchronized void writeResponse() throws IOException {
+        String message = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss").format(Calendar.getInstance().getTime());
+//                + new DataInputStream(client.getInputStream()).readUTF();
+
+//        System.out.println(new DataInputStream(client.getInputStream()));
+//        System.out.println(new DataInputStream(client.getInputStream()).readUTF());
 
         String response = "HTTP/1.1 200 OK" + CRCN +
                 "Content-Type: text/html" + CRCN +
