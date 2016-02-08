@@ -17,8 +17,8 @@ public class ProxyHandler implements Runnable {
     private InputStream streamFromServer;
     private OutputStream streamToServer;
 
-    final byte[] request = new byte[1024];
-    byte[] response = new byte[4096];
+    private final byte[] request = new byte[1024];
+    private byte[] response = new byte[4096];
 
     public ProxyHandler(Socket client, Socket server) {
         this.client = client;

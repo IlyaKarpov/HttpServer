@@ -9,7 +9,7 @@ import java.util.Calendar;
  * Created by ikar on 03.02.2016.
  *
  */
-public class Handler implements Runnable {
+public class HttpHandler implements Runnable {
 
     private static final String CRCN = "\r\n";
 
@@ -17,7 +17,7 @@ public class Handler implements Runnable {
     private InputStream inputStream;
     private OutputStream outputStream;
 
-    public Handler(Socket client) {
+    public HttpHandler(Socket client) {
         this.client = client;
         init();
     }

@@ -24,7 +24,7 @@ public class HttpServer {
 
             while (true) {
                 Socket client = server.accept();
-                executor.execute(new Handler(client));
+                executor.execute(new HttpHandler(client));
             }
         } catch (IOException e) {
             e.printStackTrace();
