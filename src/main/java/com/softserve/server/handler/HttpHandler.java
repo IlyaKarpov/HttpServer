@@ -48,7 +48,7 @@ public class HttpHandler implements Runnable {
         }
     }
 
-    private String readHeader() throws IOException {
+    public String readHeader() throws IOException {
         BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
         StringBuilder builder = new StringBuilder();
         String currentLine;
@@ -64,7 +64,7 @@ public class HttpHandler implements Runnable {
         return builder.toString();
     }
 
-    private synchronized void writeResponse() throws IOException {
+    public synchronized String writeResponse() throws IOException {
         String message = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss").format(Calendar.getInstance().getTime());
 //                + new DataInputStream(client.getInputStream()).readUTF();
 
@@ -80,6 +80,8 @@ public class HttpHandler implements Runnable {
 
         outputStream.write(result.getBytes());
         outputStream.flush();
+
+        return result;
     }
 
 }
