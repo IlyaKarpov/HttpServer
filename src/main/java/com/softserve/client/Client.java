@@ -9,10 +9,14 @@ import java.net.Socket;
  */
 public class Client {
 
-    private int marker;
+    private String marker;
 
-    public Client(int  marker) {
+    public Client(String marker) {
         this.marker = marker;
+    }
+
+    public String getMarker() {
+        return marker;
     }
 
     public void sentMessage() {
@@ -31,7 +35,7 @@ public class Client {
 
     public static void main(String[] args) {
         for (int i = 0; i < 10; i++) {
-            new Client(i).sentMessage();
+            new Client(String.valueOf(i)).sentMessage();
         }
     }
 

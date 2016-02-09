@@ -31,7 +31,6 @@ public class StreamUtil {
                 }
             }
         }
-        System.out.println(builder);
         return builder.toString();
     }
 
