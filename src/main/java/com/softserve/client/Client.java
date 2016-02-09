@@ -10,9 +10,15 @@ import java.net.Socket;
 public class Client {
 
     private String marker;
+    private int port = 8080;
 
     public Client(String marker) {
         this.marker = marker;
+    }
+
+    public Client(String marker, int port) {
+        this.marker = marker;
+        this.port = port;
     }
 
     public String getMarker() {
@@ -21,7 +27,7 @@ public class Client {
 
     public void sentMessage() {
         try {
-            Socket client = new Socket("localhost", 8080);
+            Socket client = new Socket("localhost", port);
 
             DataOutputStream dataOutputStream = new DataOutputStream(client.getOutputStream());
             dataOutputStream.writeUTF(String.valueOf(marker));
