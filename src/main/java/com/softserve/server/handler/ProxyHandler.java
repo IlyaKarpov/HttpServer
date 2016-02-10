@@ -2,6 +2,7 @@ package com.softserve.server.handler;
 
 import java.io.*;
 import java.net.Socket;
+import java.util.Arrays;
 
 /**
  * Created by ikar on 05.02.2016.
@@ -42,13 +43,13 @@ public class ProxyHandler implements Runnable {
             readHeader();
             writeResponse();
         } catch (IOException e) {
-            e.printStackTrace();
+//            e.printStackTrace();
         }finally {
             try {
                 server.close();
                 client.close();
             } catch (IOException e) {
-                e.printStackTrace();
+//                e.printStackTrace();
             }
         }
     }
@@ -78,6 +79,14 @@ public class ProxyHandler implements Runnable {
             streamToClient.flush();
         }
         streamToClient.close();
+    }
+
+    public byte[] getRequest() {
+        return  request;
+    }
+
+    public byte[] getResponse() {
+        return response;
     }
 
 }

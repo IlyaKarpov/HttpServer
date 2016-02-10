@@ -27,10 +27,12 @@ public class ProxyServer {
             while (true) {
                 Socket client = proxy.accept();
                 Socket server = new Socket("localhost", SERVER_PORT);
+                System.out.println(client + " " + server);
                 executor.execute(new ProxyHandler(client, server));
             }
         } catch (IOException e) {
             e.printStackTrace();
         }
+
     }
 }
