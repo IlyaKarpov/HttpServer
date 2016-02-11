@@ -82,7 +82,7 @@ public class ProxyHandler implements Runnable {
     }
 
     public byte[] getRequest() {
-        return  request;
+        return request;
     }
 
     public byte[] getResponse() {

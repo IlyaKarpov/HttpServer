@@ -34,7 +34,7 @@ public class HttpHandler implements Runnable {
     public void run() {
         try {
 
-            System.out.println(readHeader());
+            readHeader();
             writeResponse();
 
         } catch (IOException e) {
