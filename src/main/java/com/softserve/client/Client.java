@@ -1,5 +1,7 @@
 package com.softserve.client;
 
+import com.softserve.util.StreamUtil;
+
 import java.io.*;
 import java.net.Socket;
 
@@ -9,8 +11,10 @@ import java.net.Socket;
  */
 public class Client {
 
+    private static final String CRCN = "\r\n";
+
     private String marker;
-    private int port = 8080;
+    private int port = 9000;
 
     public Client(String marker) {
         this.marker = marker;
@@ -29,9 +33,12 @@ public class Client {
         try {
             Socket client = new Socket("localhost", port);
 
-            DataOutputStream dataOutputStream = new DataOutputStream(client.getOutputStream());
-            dataOutputStream.writeUTF(String.valueOf(marker));
-            dataOutputStream.flush();
+            PrintStream printStream = new PrintStream(client.getOutputStream());
+            printStream.print(marker);
+            printStream.flush();
+            client.shutdownOutput();
+
+            System.out.println(StreamUtil.getStringFromInputStream(client.getInputStream()));
 
             client.close();
         } catch (IOException e) {
@@ -40,9 +47,16 @@ public class Client {
     }
 
     public static void main(String[] args) {
-        for (int i = 0; i < 10; i++) {
-            new Client(String.valueOf(i)).sentMessage();
-        }
+
+        String header = "GET / HTTP/1.1" + CRCN +
+                "Accept: text/html, application/xhtml+xml, */*" + CRCN +
+                "Accept-Language: uk-UA" + CRCN +
+                "User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; Trident/7.0; rv:11.0) like Gecko" + CRCN +
+                "Accept-Encoding: gzip, deflate" + CRCN +
+                "Host: localhost:9000" + CRCN +
+                "Connection: Keep-Alive";
+
+        new Client(header).sentMessage();
     }
 
 }
