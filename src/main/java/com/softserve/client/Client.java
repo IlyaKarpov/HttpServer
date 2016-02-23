@@ -38,7 +38,7 @@ public class Client {
             printStream.flush();
             client.shutdownOutput();
 
-            System.out.println(StreamUtil.getStringFromInputStream(client.getInputStream()));
+            if (StreamUtil.getStringFromInputStream(client.getInputStream()).contains("407")) System.out.println(true);
 
             client.close();
         } catch (IOException e) {
