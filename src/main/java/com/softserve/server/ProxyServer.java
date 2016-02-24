@@ -14,8 +14,8 @@ import java.util.concurrent.Executors;
 
 public class ProxyServer {
 
-    private final static int PROXY_PORT = 9000;
-    private final static int SERVER_PORT = 8080;
+    private final static int PROXY_PORT = 9090;
+    private final static int SERVER_PORT = 9000;
 
     public static void main(String... a) {
 
@@ -27,7 +27,6 @@ public class ProxyServer {
             while (true) {
                 Socket client = proxy.accept();
                 Socket server = new Socket("localhost", SERVER_PORT);
-                System.out.println(client + " " + server);
                 executor.execute(new ProxyHandler(client, server));
             }
         } catch (IOException e) {

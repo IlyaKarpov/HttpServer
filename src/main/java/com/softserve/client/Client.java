@@ -14,7 +14,7 @@ public class Client {
     private static final String CRCN = "\r\n";
 
     private String marker;
-    private int port = 9000;
+    private int port = 9090;
 
     public Client(String marker) {
         this.marker = marker;
@@ -38,7 +38,7 @@ public class Client {
             printStream.flush();
             client.shutdownOutput();
 
-            if (StreamUtil.getStringFromInputStream(client.getInputStream()).contains("407")) System.out.println(true);
+//            if (StreamUtil.getStringFromInputStream(client.getInputStream()).contains("407")) System.out.println(true);
 
             client.close();
         } catch (IOException e) {
