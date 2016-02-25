@@ -47,10 +47,7 @@ public class ProxyHandler implements Runnable {
 
     public void run() {
         try {
-            String headerFromClient = new Scanner(streamFromClient).nextLine();
-            System.out.println(headerFromClient);
-
-            if (!headerFromClient.contains("Proxy-Authorization")) {
+            if (checkClientRequest()) {
                 write407Response();
             }
 //            else {
@@ -59,7 +56,8 @@ public class ProxyHandler implements Runnable {
 //            }
         } catch (IOException e) {
             e.printStackTrace();
-        } finally {
+        }
+        finally {
             try {
                 server.close();
                 client.close();
@@ -107,7 +105,15 @@ public class ProxyHandler implements Runnable {
     private void write407Response() throws IOException {
         streamToClient.write(ProxyServerCodes.CODE407.getMessage().getBytes());
         streamToClient.flush();
-//        client.shutdownOutput();
+    }
+
+    private boolean checkClientRequest() {
+        boolean isNeedProxyAuthorization = true;
+        Scanner header = new Scanner(streamFromClient);
+        while (header.hasNextLine()) {
+            if (header.nextLine().contains("Proxy-Authorization")) isNeedProxyAuthorization = false;
+        }
+        return isNeedProxyAuthorization;
     }
 
 }
