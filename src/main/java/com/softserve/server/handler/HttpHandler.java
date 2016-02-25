@@ -35,7 +35,7 @@ public class HttpHandler implements Runnable {
         try {
 
             String header = readHeader();
-//            System.out.println(header);
+            System.out.println(header);
             writeResponse(header);
 
         } catch (IOException e) {
@@ -69,32 +69,19 @@ public class HttpHandler implements Runnable {
 
         String result;
 
-        if (checkHTTPHeader(header)) {
+        String message = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss").format(Calendar.getInstance().getTime());
 
-            String message = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss").format(Calendar.getInstance().getTime());
+        String response = "HTTP/1.1 200 OK" + CRCN +
+                "Content-Type: text/html" + CRCN +
+                "Content-Length: " + message.length() + CRCN +
+                "Connection: close" + CRCN + CRCN;
 
-            String response = "HTTP/1.1 200 OK" + CRCN +
-                    "Content-Type: text/html" + CRCN +
-                    "Content-Length: " + message.length() + CRCN +
-                    "Connection: close" + CRCN + CRCN;
-
-            result = response + message;
-
-        } else {
-            result = "HTTP/1.1 407 Proxy Authentication Required" + CRCN +
-                    "Proxy-Authenticate: NTLM" + CRCN +
-                    "Proxy-Connection: keep-alive" + CRCN +
-                    "Content-Length: 0" + CRCN;
-        }
+        result = response + message;
 
         outputStream.write(result.getBytes());
         outputStream.flush();
 
         return result;
-    }
-
-    private static boolean checkHTTPHeader(String header) {
-        return header.contains("Proxy-Authorization");
     }
 
 }

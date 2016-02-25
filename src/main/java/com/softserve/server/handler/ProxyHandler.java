@@ -47,12 +47,12 @@ public class ProxyHandler implements Runnable {
 
     public void run() {
         try {
-            if (checkClientRequest()) {
-                write407Response();
-            }
+//            if (checkClientRequest()) {
+//                write407Response();
+//            }
 //            else {
-//                readHeader();
-//                writeResponse();
+                readHeader();
+                writeResponse();
 //            }
         } catch (IOException e) {
             e.printStackTrace();

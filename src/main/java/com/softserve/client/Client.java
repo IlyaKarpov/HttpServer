@@ -52,9 +52,15 @@ public class Client {
             streamFromClient.write(marker.getBytes());
             streamFromClient.flush();
 
-            client.close();
+//            client.close();
         } catch (IOException e) {
             e.printStackTrace();
+        } finally {
+            try {
+                client.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
     }
 
