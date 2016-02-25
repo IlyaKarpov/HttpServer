@@ -1,14 +1,21 @@
 package com.softserve.server.handler;
 
+import com.softserve.server.ProxyServer;
+import com.softserve.server.states.ProxyServerCodes;
+import com.softserve.util.StreamUtil;
+
 import java.io.*;
 import java.net.Socket;
 import java.util.Arrays;
+import java.util.Scanner;
 
 /**
  * Created by ikar on 05.02.2016.
  *
  */
 public class ProxyHandler implements Runnable {
+
+    private static final String CRCN = "\r\n";
 
     private Socket client;
     private InputStream streamFromClient;
@@ -40,16 +47,24 @@ public class ProxyHandler implements Runnable {
 
     public void run() {
         try {
-            readHeader();
-            writeResponse();
+            String headerFromClient = new Scanner(streamFromClient).nextLine();
+            System.out.println(headerFromClient);
+
+            if (!headerFromClient.contains("Proxy-Authorization")) {
+                write407Response();
+            }
+//            else {
+//                readHeader();
+//                writeResponse();
+//            }
         } catch (IOException e) {
-//            e.printStackTrace();
-        }finally {
+            e.printStackTrace();
+        } finally {
             try {
                 server.close();
                 client.close();
             } catch (IOException e) {
-//                e.printStackTrace();
+                e.printStackTrace();
             }
         }
     }
@@ -87,6 +102,12 @@ public class ProxyHandler implements Runnable {
 
     public byte[] getResponse() {
         return response;
+    }
+
+    private void write407Response() throws IOException {
+        streamToClient.write(ProxyServerCodes.CODE407.getMessage().getBytes());
+        streamToClient.flush();
+//        client.shutdownOutput();
     }
 
 }

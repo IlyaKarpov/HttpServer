@@ -1,9 +1,11 @@
 package com.softserve.client;
 
+import com.softserve.server.states.ProxyServerCodes;
 import com.softserve.util.StreamUtil;
 
 import java.io.*;
 import java.net.Socket;
+import java.util.Scanner;
 
 /**
  * Created by ikar on 03.02.2016.
@@ -31,16 +33,22 @@ public class Client {
 
     public void sentMessage() {
         try {
-            Socket client = new Socket("localhost", port);
+            Socket server = new Socket("localhost", port);
+            InputStream inputStream = server.getInputStream();
+            OutputStream outputStream = server.getOutputStream();
 
-            PrintStream printStream = new PrintStream(client.getOutputStream());
-            printStream.print(marker);
-            printStream.flush();
-            client.shutdownOutput();
+            try {
+                outputStream.write(marker.getBytes());
+                outputStream.flush();
+//                server.shutdownOutput();
 
-//            if (StreamUtil.getStringFromInputStream(client.getInputStream()).contains("407")) System.out.println(true);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
 
-            client.close();
+            System.out.println(new Scanner(server.getInputStream()).nextLine());
+
+            server.close();
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -48,12 +56,12 @@ public class Client {
 
     public static void main(String[] args) {
 
-        String header = "GET / HTTP/1.1" + CRCN +
-                "Accept: text/html, application/xhtml+xml, */*" + CRCN +
-                "Accept-Language: uk-UA" + CRCN +
-                "User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; Trident/7.0; rv:11.0) like Gecko" + CRCN +
-                "Accept-Encoding: gzip, deflate" + CRCN +
-                "Host: localhost:9000" + CRCN +
+        String header = "GET / HTTP/1.1 " +
+                "Accept: text/html, application/xhtml+xml, */* " +
+                "Accept-Language: uk-UA " +
+                "User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; Trident/7.0; rv:11.0) like Gecko " +
+                "Accept-Encoding: gzip, deflate " +
+                "Host: localhost:9000 " +
                 "Connection: Keep-Alive";
 
         new Client(header).sentMessage();
