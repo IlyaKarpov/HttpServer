@@ -1,9 +1,7 @@
 package com.softserve.util;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
+import java.io.*;
+import java.net.Socket;
 
 /**
  * Created by ikar on 08.02.2016.
@@ -18,7 +16,7 @@ public class StreamUtil {
         try {
             reader = new BufferedReader(new InputStreamReader(inputStream));
             while ((currentLine = reader.readLine()) != null) {
-                builder.append(currentLine);
+                builder.append(currentLine).append("\n");
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -32,6 +30,12 @@ public class StreamUtil {
             }
         }
         return builder.toString();
+    }
+
+    public static String readMessageFromServer(Socket socket) throws IOException {
+        byte[] buff = new byte[64 * 1024];
+        int read = socket.getInputStream().read(buff);
+        return new String(buff, 0, read);
     }
 
 }

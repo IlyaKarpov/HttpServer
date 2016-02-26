@@ -1,13 +1,14 @@
 package com.softserve.server.handler;
 
-import com.softserve.server.ProxyServer;
+import com.softserve.ntlm.Type2HeaderGenerator;
 import com.softserve.server.states.ProxyServerCodes;
 import com.softserve.util.StreamUtil;
+import com.sun.org.apache.xerces.internal.impl.dv.util.Base64;
+import jcifs.ntlmssp.Type1Message;
+import org.apache.commons.io.IOUtils;
 
 import java.io.*;
 import java.net.Socket;
-import java.util.Arrays;
-import java.util.Scanner;
 
 /**
  * Created by ikar on 05.02.2016.
@@ -25,8 +26,7 @@ public class ProxyHandler implements Runnable {
     private InputStream streamFromServer;
     private OutputStream streamToServer;
 
-    private final byte[] request = new byte[1024];
-    private byte[] response = new byte[4096];
+    private String type1Code;
 
     public ProxyHandler(Socket client, Socket server) {
         this.client = client;
@@ -47,13 +47,18 @@ public class ProxyHandler implements Runnable {
 
     public void run() {
         try {
-//            if (checkClientRequest()) {
-//                write407Response();
-//            }
-//            else {
-                readHeader();
-                writeResponse();
-//            }
+            if (!checkClientRequest()) {
+                write407Response();
+
+                if (checkClientRequest()) {
+                    write407ResponseWithType2MessageHeader();
+
+                    if (checkClientRequest()) {
+                        readHeader();
+                        writeResponse();
+                    }
+                }
+            }
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -68,52 +73,59 @@ public class ProxyHandler implements Runnable {
     }
 
     private void readHeader() throws IOException {
-        Thread thread = new Thread() {
+        new Thread() {
             public void run() {
-                int bytesRead;
                 try {
-                    while ((bytesRead = streamFromClient.read(request)) != -1) {
-                        streamToServer.write(request, 0, bytesRead);
-                        streamToServer.flush();
-                    }
-                    streamToServer.close();
+                    IOUtils.copy(streamFromClient, streamToServer);
+                    client.shutdownInput();
+                    server.shutdownOutput();
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
             }
-        };
-        thread.start();
+        }.start();
     }
 
     private void writeResponse() throws IOException {
-        int bytesRead;
-        while ((bytesRead = streamFromServer.read(response)) != -1) {
-            streamToClient.write(response, 0, bytesRead);
-            streamToClient.flush();
-        }
-        streamToClient.close();
-    }
-
-    public byte[] getRequest() {
-        return request;
-    }
-
-    public byte[] getResponse() {
-        return response;
+        IOUtils.copy(streamFromServer, streamToClient);
+        client.shutdownOutput();
+        server.shutdownInput();
     }
 
     private void write407Response() throws IOException {
-        streamToClient.write(ProxyServerCodes.CODE407.getMessage().getBytes());
-        streamToClient.flush();
+        String response = ProxyServerCodes.CODE407.getMessage() + CRCN + CRCN;
+        sentResponse(response);
     }
 
-    private boolean checkClientRequest() {
-        boolean isNeedProxyAuthorization = true;
-        Scanner header = new Scanner(streamFromClient);
-        while (header.hasNextLine()) {
-            if (header.nextLine().contains("Proxy-Authorization")) isNeedProxyAuthorization = false;
+    private void write407ResponseWithType2MessageHeader() throws IOException {
+        Type1Message type1Message = new Type1Message(Base64.decode(type1Code));
+        Type2HeaderGenerator type2HeaderGenerator = new Type2HeaderGenerator(type1Message);
+        String response = ProxyServerCodes.CODE407.getMessage() + " " +
+                Base64.encode(type2HeaderGenerator.generate().toByteArray()) + CRCN + CRCN;
+        sentResponse(response);
+    }
+
+    private boolean checkClientRequest() throws IOException {
+        String request = StreamUtil.readMessageFromServer(client);
+        boolean ifContains = request.contains("Proxy-Authorization");
+        if (ifContains) {
+            type1Code = findTypeMessage(request);
         }
-        return isNeedProxyAuthorization;
+        return ifContains;
+    }
+
+    private String findTypeMessage(String request) {
+        final String proxyAuthorizationNtlmHeader = "Proxy-Authorization: NTLM ";
+        for (String string : request.split(CRCN)) {
+            if (string.contains(proxyAuthorizationNtlmHeader)) {
+                return string.replaceAll(proxyAuthorizationNtlmHeader, "").replaceAll(CRCN, "");
+            }
+        }
+        return null;
+    }
+
+    private void sentResponse(String response) throws IOException {
+        streamToClient.write(response.getBytes());
     }
 
 }

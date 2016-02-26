@@ -7,9 +7,9 @@ package com.softserve.server.states;
 public enum ProxyServerCodes {
 
     CODE407("HTTP/1.1 407 Proxy Authentication Required" + "\r\n" +
-            "Proxy-Authenticate: NTLM" + "\r\n" +
             "Proxy-Connection: keep-alive" + "\r\n" +
-            "Content-Length: 0" + "\r\n" + "\r\n");
+            "Content-Length: 0" + "\r\n" +
+            "Proxy-Authenticate: NTLM");
 
     private String message;
 
