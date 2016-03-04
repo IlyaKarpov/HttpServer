@@ -13,7 +13,7 @@ import com.softserve.server.handler.*;
  */
 public class HttpServer {
 
-    private final static int PORT = 9000;
+    private final static int PORT = 9090;
 
     public static void main(String... args) {
 
