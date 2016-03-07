@@ -1,5 +1,7 @@
 package com.softserve.server.handler;
 
+import org.apache.log4j.Logger;
+
 import java.io.*;
 import java.net.Socket;
 import java.text.SimpleDateFormat;
@@ -12,6 +14,7 @@ import java.util.Calendar;
 public class HttpHandler implements Runnable {
 
     private static final String CRCN = "\r\n";
+    private static final Logger logger = Logger.getLogger(HttpHandler.class);
 
     private Socket client;
     private InputStream inputStream;
@@ -26,6 +29,10 @@ public class HttpHandler implements Runnable {
         try {
             this.inputStream = client.getInputStream();
             this.outputStream = client.getOutputStream();
+
+            if (logger.isInfoEnabled()) {
+                logger.info("Client has accepted to the HttpServer");
+            }
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -33,17 +40,21 @@ public class HttpHandler implements Runnable {
 
     public void run() {
         try {
+            logger.warn("If some socket is turned off this method can throw an IOException");
 
             String header = readHeader();
             System.out.println(header);
             writeResponse(header);
 
         } catch (IOException e) {
+            logger.error("Connection refused");
             e.printStackTrace();
         } finally {
             try {
+                logger.warn("If connection has been refused this method can throw an IOException");
                 client.close();
             } catch (IOException e) {
+                logger.error("The Sockets of client and server haven't been closed");
                 e.printStackTrace();
             }
         }
@@ -62,6 +73,14 @@ public class HttpHandler implements Runnable {
             }
             builder.append(currentLine).append(System.getProperty("line.separator"));
         }
+
+        if (logger.isDebugEnabled()) {
+            logger.debug("HttpServer has read a client's request: \n" + builder.toString());
+        }
+        if (logger.isInfoEnabled()) {
+            logger.info("HttpServer has read a client's request");
+        }
+
         return builder.toString();
     }
 
@@ -80,6 +99,13 @@ public class HttpHandler implements Runnable {
 
         outputStream.write(result.getBytes());
         outputStream.flush();
+
+        if (logger.isDebugEnabled()) {
+            logger.debug("HttpServer has sent a client's response: \n" + result);
+        }
+        if (logger.isInfoEnabled()) {
+            logger.info("HttpServer has sent a client's respons");
+        }
 
         return result;
     }

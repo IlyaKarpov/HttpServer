@@ -2,6 +2,7 @@ git rm -rf --cached .
 git add .
 .idea/
 *.iml
+*.log
 /target/
 /out/
 /build/
