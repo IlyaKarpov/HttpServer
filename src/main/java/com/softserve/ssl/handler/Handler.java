@@ -39,7 +39,6 @@ public class Handler implements Runnable {
 
         while (true) {
             currentLine = reader.readLine();
-            System.out.println(currentLine);
             if (currentLine == null || currentLine.isEmpty()) {
                 break;
             }
