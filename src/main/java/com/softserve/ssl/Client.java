@@ -9,7 +9,7 @@ public class Client {
 
     public static void main(String... a) {
         try {
-            System.setProperty("javax.net.ssl.trustStore", "mySrvKeystore");
+            System.setProperty("javax.net.ssl.trustStore", "mySrvKeystore.jks");
             System.setProperty("javax.net.ssl.trustStorePassword", "123456");
 
             SSLSocketFactory sslsocketfactory = (SSLSocketFactory) SSLSocketFactory.getDefault();

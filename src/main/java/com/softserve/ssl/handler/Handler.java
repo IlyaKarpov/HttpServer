@@ -18,28 +18,6 @@ public class Handler implements Runnable {
         this.sslSocket = sslSocket;
     }
 
-//    public void run() {
-//        try {
-//            InputStream inputstream = sslSocket.getInputStream();
-//            InputStreamReader inputstreamreader = new InputStreamReader(inputstream);
-//            BufferedReader bufferedreader = new BufferedReader(inputstreamreader);
-//
-//            String string;
-//            while ((string = bufferedreader.readLine()) != null) {
-//                System.out.println(string);
-//                System.out.flush();
-//            }
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        } finally {
-//            try {
-//                sslSocket.close();
-//            } catch (IOException e) {
-//                e.printStackTrace();
-//            }
-//        }
-//    }
-
     public void run() {
         try {
             readHeader();
@@ -61,6 +39,7 @@ public class Handler implements Runnable {
 
         while (true) {
             currentLine = reader.readLine();
+            System.out.println(currentLine);
             if (currentLine == null || currentLine.isEmpty()) {
                 break;
             }

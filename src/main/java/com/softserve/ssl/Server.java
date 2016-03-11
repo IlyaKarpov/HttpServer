@@ -16,7 +16,7 @@ public class Server {
         ExecutorService executor = Executors.newFixedThreadPool(30);
 
         try {
-            System.setProperty("javax.net.ssl.keyStore", "mySrvKeystore");
+            System.setProperty("javax.net.ssl.keyStore", "mySrvKeystore.jks");
             System.setProperty("javax.net.ssl.keyStorePassword", "123456");
 
             SSLServerSocketFactory sslserversocketfactory =
